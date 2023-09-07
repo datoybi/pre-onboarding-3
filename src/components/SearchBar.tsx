@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import useSuggestions from "../hooks/useSuggestions";
 
-const SearchBar = () => {
+const SearchBar = ({ handleKeyDown }: any) => {
   const { fetchSuggestions, isLoading, error } = useSuggestions();
 
   const handleFormSubmit = (event: any) => {
@@ -16,7 +16,7 @@ const SearchBar = () => {
   return (
     <Form onSubmit={handleFormSubmit}>
       <FontAwesomeIcon icon={faMagnifyingGlass} />
-      <input type="text" name="keyword" />
+      <input type="text" name="keyword" onKeyDown={handleKeyDown} />
       <button type="submit">검색</button>
     </Form>
   );
@@ -54,5 +54,6 @@ const Form = styled.form`
     background: #357ae1;
     font-size: 1rem;
     font-weight: bold;
+    cursor: pointer;
   }
 `;

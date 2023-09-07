@@ -2,9 +2,9 @@ import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-const SuggestionItem = ({ name }: any) => {
+const SuggestionItem = ({ name, isFocus }: any) => {
   return (
-    <Item>
+    <Item focus={isFocus ? "true" : "false"}>
       <FontAwesomeIcon icon={faMagnifyingGlass} />
       <span>{name}</span>
     </Item>
@@ -13,9 +13,9 @@ const SuggestionItem = ({ name }: any) => {
 
 export default SuggestionItem;
 
-const Item = styled.li`
-  padding: 10px 0;
-  font-weight: 500;
+const Item = styled.li<{ focus: string }>`
+  padding: 15px 20px;
+  font-weight: ${({ focus }) => (focus === "true" ? 700 : 500)};
 
   & > svg {
     width: 12px;

@@ -11,6 +11,7 @@ const useSuggestions = () => {
     const fetchSuggestions = async () => {
       const selectedIssue = await sendRequest(getSuggestions, keyword);
       if (!selectedIssue) return {};
+      console.info("calling api");
       setSuggestions(selectedIssue);
     };
     fetchSuggestions();

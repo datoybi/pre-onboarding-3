@@ -3,11 +3,15 @@ import { styled } from "styled-components";
 import SuggestionItem from "./SuggestionItem";
 import { SuggestionContext } from "../contexts/SuggestionContext";
 
-const SuggestionList = () => {
+const SuggestionList = ({ focusIndex }: any) => {
   const { suggestions } = useContext(SuggestionContext);
 
-  const ItemElements = suggestions.map((suggestion: any) => (
-    <SuggestionItem key={suggestion.sickCd} name={suggestion.sickNm} />
+  const ItemElements = suggestions.map((suggestion: any, index: number) => (
+    <SuggestionItem
+      key={suggestion.sickCd}
+      name={suggestion.sickNm}
+      isFocus={focusIndex === index}
+    />
   ));
 
   return (
@@ -26,7 +30,6 @@ const List = styled.ul`
   flex-direction: column;
   margin-top: 20px;
   width: 100%;
-  padding: 20px;
   background-color: #fff;
   border-radius: 16px;
   margin-left: 15px;
@@ -37,5 +40,6 @@ const List = styled.ul`
     color: gray;
     font-weight: 600;
     margin-bottom: 10px;
+    padding: 15px 20px;
   }
 `;
