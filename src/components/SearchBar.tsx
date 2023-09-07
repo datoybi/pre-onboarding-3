@@ -1,12 +1,22 @@
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import useSuggestions from "../hooks/useSuggestions";
 
 const SearchBar = () => {
+  const { fetchSuggestions, isLoading, error } = useSuggestions();
+
+  const handleFormSubmit = (event: any) => {
+    event.preventDefault();
+    const { value: keyword } = event.target.elements["keyword"];
+    console.log(keyword);
+    fetchSuggestions(keyword);
+  };
+
   return (
-    <Form>
+    <Form onSubmit={handleFormSubmit}>
       <FontAwesomeIcon icon={faMagnifyingGlass} />
-      <input type="text" />
+      <input type="text" name="keyword" />
       <button type="submit">검색</button>
     </Form>
   );
