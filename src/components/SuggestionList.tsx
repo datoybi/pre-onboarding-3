@@ -8,20 +8,17 @@ const SuggestionList = () => {
   const { suggestion, focusIndex } = useContext(SuggestionContext);
 
   const ItemElement = () => {
+    if (suggestion === null) return;
     if (suggestion.length === 0) {
       return <Empty>검색 결과가 없습니다.</Empty>;
     }
-    return suggestion.map((suggestion: Sick[], index: number) => {
-      if (suggestion !== null) {
-        return (
-          <SuggestionItem
-            key={suggestion.sickCd}
-            name={suggestion.sickNm}
-            isFocus={focusIndex === index}
-          />
-        );
-      }
-    });
+    return suggestion.map((suggestion: Sick[] | any, index: number) => (
+      <SuggestionItem
+        key={suggestion?.sickCd}
+        name={suggestion?.sickNm}
+        isFocus={focusIndex === index}
+      />
+    ));
   };
 
   return (

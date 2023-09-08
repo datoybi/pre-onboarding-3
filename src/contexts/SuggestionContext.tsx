@@ -39,7 +39,7 @@ export function SuggestionContextProvider({
   const [suggestion, setSuggestion] = useState<Sick[] | null>(null);
   const [focusIndex, setFocusIndex] = useState<number>(0);
 
-  const deleteExpiredData = (keyword: string) => {
+  const deleteExpiredCache = (keyword: string) => {
     let nextSuggestions = [...cache];
     const expiredIndex = cache.findIndex(
       (suggestion) => suggestion.keyword === keyword
@@ -67,6 +67,7 @@ export function SuggestionContextProvider({
     };
 
     const canUseCache = hasSuggestions && !isExpired();
+    setFocusIndex(0);
 
     if (canUseCache) {
       const updatedCache = cache.find(
@@ -77,7 +78,7 @@ export function SuggestionContextProvider({
     }
 
     if (!canUseCache) {
-      const nextCache = deleteExpiredData(keyword);
+      const nextCache = deleteExpiredCache(keyword);
       const newSuggestion: Sick[] | any = await fetchSuggestions(keyword);
       console.info("calling api");
 
@@ -97,8 +98,6 @@ export function SuggestionContextProvider({
       setSuggestion(() => newSuggestion);
     }
   };
-
-  console.log(cache);
 
   return (
     <SuggestionContext.Provider
