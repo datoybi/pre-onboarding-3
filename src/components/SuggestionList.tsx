@@ -3,8 +3,8 @@ import { styled } from "styled-components";
 import SuggestionItem from "./SuggestionItem";
 import { SuggestionContext } from "../contexts/SuggestionContext";
 
-const SuggestionList = ({ focusIndex }: any) => {
-  const { suggestions } = useContext(SuggestionContext);
+const SuggestionList = () => {
+  const { suggestions, focusIndex } = useContext(SuggestionContext);
 
   const ItemElements = suggestions.map((suggestion: any, index: number) => (
     <SuggestionItem
@@ -16,7 +16,7 @@ const SuggestionList = ({ focusIndex }: any) => {
 
   return (
     <List>
-      <p>추천 검색어</p>
+      <h3>추천 검색어</h3>
       {ItemElements}
     </List>
   );
@@ -28,18 +28,18 @@ const List = styled.ul`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 10px;
   width: 100%;
   background-color: #fff;
   border-radius: 16px;
   margin-left: 15px;
 
-  & > p {
+  & > h3 {
     display: block;
     font-size: 0.8rem;
     color: gray;
     font-weight: 600;
     margin-bottom: 10px;
-    padding: 15px 20px;
+    padding: 20px 10px 0 20px;
   }
 `;

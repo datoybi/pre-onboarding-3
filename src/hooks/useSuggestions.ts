@@ -10,7 +10,7 @@ const useSuggestions = () => {
   async function fetchSuggestions(keyword: string) {
     const fetchSuggestions = async () => {
       const selectedIssue = await sendRequest(getSuggestions, keyword);
-      if (!selectedIssue) return {};
+      if (!selectedIssue) return [];
       console.info("calling api");
       setSuggestions(selectedIssue);
     };

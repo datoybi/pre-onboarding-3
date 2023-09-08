@@ -9,6 +9,8 @@ import { ReactNode, createContext, useState } from "react";
 
 const GlobalContext: any = {
   suggestions: {},
+  focusIndex: 0,
+  setFocusIndex: () => {},
   setSuggestions: () => {
     throw new Error();
   },
@@ -22,12 +24,19 @@ export function SuggestionContextProvider({
   children: ReactNode;
 }) {
   const [suggestions, setSuggestions] = useState<any>([]);
+  const [focusIndex, setFocusIndex] = useState<number>(0);
+
+  const handleSetSuggestion = () => {};
+
+  console.log(suggestions);
 
   return (
     <SuggestionContext.Provider
       value={{
         suggestions,
+        focusIndex,
         setSuggestions,
+        setFocusIndex,
       }}
     >
       {children}

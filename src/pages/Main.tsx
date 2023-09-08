@@ -1,27 +1,26 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { styled } from "styled-components";
 import SearchBar from "../components/SearchBar";
 import SuggestionList from "../components/SuggestionList";
 import { SuggestionContext } from "../contexts/SuggestionContext";
 
 export default function Main() {
-  const { suggestions } = useContext(SuggestionContext);
-  const [focusIndex, setFocusIndex] = useState<number>(0);
+  const { suggestions, focusIndex, setFocusIndex } =
+    useContext(SuggestionContext);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
-
     switch (event.key) {
       case "ArrowDown":
         if (suggestions.length < 0) return;
         if (focusIndex === suggestions.length - 1) setFocusIndex(0);
         if (focusIndex < suggestions.length - 1)
-          setFocusIndex((prevIndex) => prevIndex + 1);
+          setFocusIndex((prevIndex: number) => prevIndex + 1);
         break;
       case "ArrowUp":
         if (focusIndex === 0) setFocusIndex(suggestions.length);
         if (focusIndex < suggestions.length)
-          setFocusIndex((prevIndex) => prevIndex - 1);
+          setFocusIndex((prevIndex: number) => prevIndex - 1);
         break;
       default:
     }
@@ -30,7 +29,7 @@ export default function Main() {
   return (
     <Wrapper>
       <SearchBar handleKeyDown={handleKeyDown} />
-      <SuggestionList focusIndex={focusIndex} />
+      <SuggestionList />
     </Wrapper>
   );
 }
