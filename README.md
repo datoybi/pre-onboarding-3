@@ -1,46 +1,120 @@
-# Getting Started with Create React App
+# **프리온보딩 3주차 개인 과제 - 윤다솜**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚩목표
 
-## Available Scripts
+검색창 구현 + 검색어 추천 기능 구현 + 캐싱 기능 구현
 
-In the project directory, you can run:
+## 🌈 배포
 
-### `npm start`
+https://pre-onboarding-3.vercel.app/
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## ✨기능 구현 사항
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### API 호출별로 로컬 캐싱 구현
 
-### `npm test`
+- context안에 cache state를 선언하여 prop drilling 방지 및 전역적으로 cache 관리
+  ```jsx
+  export function SuggestionContextProvider({
+    children,
+  }: {
+    children: ReactNode;
+  }) {
+    const [cache, setCache] = useState<Cache[]>([]);
+  // ...
+    return (
+      <SuggestionContext.Provider value={{}}>
+        {children}
+      </SuggestionContext.Provider>
+    );
+  }
+  ```
+- cache state데이터를 json으로 구현
+  ```jsx
+  type Cache = {
+    keyword: string;
+    staleTime: number;
+    suggestions: Sick[];
+  };
+  ```
+- 해당 키워드가 캐싱 데이터에 존재하면 캐싱 데이터를 사용
+  ```jsx
+  if (canUseCache) {
+    const updatedCache = cache.find(
+      (suggestion) => suggestion?.keyword === keyword
+    )?.suggestions;
+    if (updatedCache) setSuggestion(() => updatedCache);
+  }
+  ```
+- 해당 키워드가 캐싱 데이터에 존재하지 않다면 api 호출
+  ```jsx
+  if (!canUseCache) {
+    const newSuggestion: Sick[] = await fetchSuggestions(keyword);
+    console.info("calling api");
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    if (newSuggestion.length === 0) {
+      setSuggestion([]);
+      return;
+    }
 
-### `npm run build`
+    setCache(() => [
+      ...nextCache,
+      {
+        keyword,
+        suggestions: newSuggestion,
+        staleTime: new Date().getTime(),
+      },
+    ]);
+    setSuggestion(() => newSuggestion);
+  }
+  ```
+- 키워드의 만료시간이 지났다면 캐시에서 삭제 후, api 호출
+  ```jsx
+  const deleteExpiredCache = (keyword: string) => {
+      let nextSuggestions = [...cache];
+      const expiredIndex = cache.findIndex(
+        (suggestion) => suggestion.keyword === keyword
+      );
+      if (expiredIndex > -1) {
+        nextSuggestions = [...cache];
+        nextSuggestions.splice(expiredIndex, 1);
+      }
+      return nextSuggestions;
+    };
+  ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### debounce 적용
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+입력마다 API 호출하지 않도록 lodash의 debounce를 이용하여 구현
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```jsx
+const handleKeywordChange = debounce(
+  (event: React.ChangeEvent<HTMLInputElement>) => {
+    const keyword = event.target.value;
+    handleSetSuggestions(keyword);
+  },
+  1000
+);
+```
 
-### `npm run eject`
+### 키보드만으로 추천 검색어들로 이동 가능하도록 구현
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+input에 focus가 되었을 때,
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+위, 아래 키보드를 이용하여 추천 검색어 횡단 기능 구현
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```jsx
+switch (event.key) {
+  case "ArrowDown":
+    if (suggestion.length < 0) return;
+    if (focusIndex === suggestion.length - 1) setFocusIndex(0);
+    if (focusIndex < suggestion.length - 1)
+      setFocusIndex((prevIndex: number) => prevIndex + 1);
+    break;
+  case "ArrowUp":
+    if (focusIndex === 0) setFocusIndex(suggestion.length);
+    if (focusIndex < suggestion.length)
+      setFocusIndex((prevIndex: number) => prevIndex - 1);
+    break;
+  default:
+}
+```
