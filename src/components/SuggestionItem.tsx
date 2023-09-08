@@ -2,7 +2,12 @@ import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-const SuggestionItem = ({ name, isFocus }: any) => {
+type SuggestionItemType = {
+  name: string;
+  isFocus: boolean;
+};
+
+const SuggestionItem = ({ name, isFocus }: SuggestionItemType) => {
   return (
     <Item focus={isFocus ? "true" : "false"}>
       <FontAwesomeIcon icon={faMagnifyingGlass} />

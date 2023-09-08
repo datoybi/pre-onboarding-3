@@ -8,9 +8,11 @@ export default function Main() {
   const { suggestion, focusIndex, setFocusIndex } =
     useContext(SuggestionContext);
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
+  const handleKeyDown = (event: React.KeyboardEvent): void => {
     if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+    if (suggestion === null) return;
     event.preventDefault();
+
     switch (event.key) {
       case "ArrowDown":
         if (suggestion.length < 0) return;

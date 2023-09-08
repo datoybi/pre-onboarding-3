@@ -1,22 +1,29 @@
-import { ReactNode, createContext, useState } from "react";
-import { getSuggestions } from "../apis/remotes";
-// interface GlobalContextPops {
-//   issue: any;
-//   issues: Issues;
-//   setIssue: Dispatch<SetStateAction<Issue>>;
-//   setIssues: Dispatch<SetStateAction<Issues>>;
-// }
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useState,
+} from "react";
+import { fetchSuggestions } from "../apis/remotes";
+import { Cache, Sick } from "../types";
+
+type GlobalContextType = {
+  suggestion: Sick[] | null;
+  focusIndex: number;
+  setFocusIndex: Dispatch<SetStateAction<number>>;
+  handleSetSuggestions: (keyword: string) => void;
+};
 
 const STALE_CHECK_TIME = 10000;
 
-const GlobalContext: any = {
-  suggestions: [],
-  keywordSuggestion: () => {},
+const GlobalContext: GlobalContextType = {
+  suggestion: [],
   focusIndex: 0,
-  setFocusIndex: () => {},
-  setKeyword: () => {},
-  getSuggestion: () => {},
-  setSuggestions: () => {
+  setFocusIndex: () => {
+    throw new Error();
+  },
+  handleSetSuggestions: () => {
     throw new Error();
   },
 };
@@ -28,17 +35,17 @@ export function SuggestionContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const [suggestions, setSuggestions] = useState<any>([]);
-  const [suggestion, setSuggestion] = useState<any>(null);
+  const [cache, setCache] = useState<Cache[]>([]);
+  const [suggestion, setSuggestion] = useState<Sick[] | null>(null);
   const [focusIndex, setFocusIndex] = useState<number>(0);
 
   const deleteExpiredData = (keyword: string) => {
-    let nextSuggestions = [...suggestions];
-    const expiredIndex = suggestions.findIndex(
-      (suggestion: any) => suggestion.keyword === keyword
+    let nextSuggestions = [...cache];
+    const expiredIndex = cache.findIndex(
+      (suggestion) => suggestion.keyword === keyword
     );
     if (expiredIndex > -1) {
-      nextSuggestions = [...suggestions];
+      nextSuggestions = [...cache];
       nextSuggestions.splice(expiredIndex, 1);
     }
     return nextSuggestions;
@@ -46,30 +53,32 @@ export function SuggestionContextProvider({
 
   const handleSetSuggestions = async (keyword: string) => {
     // 캐시안에 있는지 체크
-    const hasSuggestions = suggestions.some(
-      (suggestion: any) => suggestion.keyword === keyword
+    const hasSuggestions = cache.some(
+      (suggestion) => suggestion.keyword === keyword
     );
 
     // 만료됐는지 체크
     const isExpired = () => {
-      return (
-        new Date().getTime() -
-          suggestions.find((suggestion: any) => suggestion.keyword === keyword)
-            .staleTime >
-        STALE_CHECK_TIME
-      );
+      const cacheTime = cache.find(
+        (suggestion) => suggestion?.keyword === keyword
+      )?.staleTime;
+      if (!cacheTime) return;
+      return new Date().getTime() - cacheTime > STALE_CHECK_TIME;
     };
 
-    if (hasSuggestions && !isExpired()) {
-      setSuggestion(
-        () =>
-          suggestions.find((suggestion: any) => suggestion.keyword === keyword)
-            .suggestions
-      );
+    const canUseCache = hasSuggestions && !isExpired();
+
+    if (canUseCache) {
+      const updatedCache = cache.find(
+        (suggestion) => suggestion?.keyword === keyword
+      )?.suggestions;
+      if (updatedCache) setSuggestion(() => updatedCache);
       console.log("캐시 사용");
-    } else {
-      const nextSuggestions = deleteExpiredData(keyword);
-      const newSuggestion: any = await getSuggestions(keyword);
+    }
+
+    if (!canUseCache) {
+      const nextCache = deleteExpiredData(keyword);
+      const newSuggestion: Sick[] | any = await fetchSuggestions(keyword);
       console.info("calling api");
 
       if (newSuggestion.length === 0) {
@@ -77,8 +86,8 @@ export function SuggestionContextProvider({
         return;
       }
 
-      setSuggestions(() => [
-        ...nextSuggestions,
+      setCache(() => [
+        ...nextCache,
         {
           keyword,
           suggestions: newSuggestion,
@@ -89,12 +98,11 @@ export function SuggestionContextProvider({
     }
   };
 
-  console.log(suggestions);
+  console.log(cache);
 
   return (
     <SuggestionContext.Provider
       value={{
-        suggestions,
         suggestion,
         focusIndex,
         handleSetSuggestions,

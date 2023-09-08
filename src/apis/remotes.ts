@@ -1,4 +1,5 @@
 import { http } from "./http";
+import { Sick } from "../types";
 
-export const getSuggestions = (keyword: string) =>
-  http.get<any>("/sick?_limit=10", { params: { q: keyword } });
+export const fetchSuggestions = (keyword: string) =>
+  http.get<Sick>("/sick?_limit=10", { params: { q: keyword } });

@@ -5,13 +5,20 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { SuggestionContext } from "../contexts/SuggestionContext";
 import { debounce } from "lodash";
 
-const SearchBar = ({ handleKeyDown }: any) => {
+type SearchBarType = {
+  handleKeyDown: (event: React.KeyboardEvent) => void;
+};
+
+const SearchBar = ({ handleKeyDown }: SearchBarType) => {
   const { handleSetSuggestions } = useContext(SuggestionContext);
 
-  const handleKeywordChange = debounce((event: any) => {
-    const { value: keyword } = event.target;
-    handleSetSuggestions(keyword);
-  }, 1000);
+  const handleKeywordChange = debounce(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const keyword = event.target.value;
+      handleSetSuggestions(keyword);
+    },
+    1000
+  );
 
   return (
     <Form autoComplete="off">
