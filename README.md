@@ -115,9 +115,7 @@ const handleKeywordChange = debounce(
 
 ### 키보드만으로 추천 검색어들로 이동 가능하도록 구현
 
-input에 focus가 되었을 때,
-
-위, 아래 키보드를 이용하여 추천 검색어 횡단 기능 구현
+input에 focus가 되었을 때, 위, 아래 키보드를 이용하여 추천 검색어 횡단 기능 구현
 
 ```jsx
 switch (event.key) {
