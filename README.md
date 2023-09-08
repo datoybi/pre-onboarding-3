@@ -4,17 +4,17 @@
 
 검색창 구현 + 검색어 추천 기능 구현 + 캐싱 기능 구현
 
----
+<br/>
 
 ## 🌈 배포
 
 https://pre-onboarding-3.vercel.app/
 
----
+<br/>
 
 ## ✨기능 구현 사항
 
----
+<br/>
 
 ### API 호출별로 로컬 캐싱 구현
 
@@ -95,7 +95,7 @@ https://pre-onboarding-3.vercel.app/
     };
   ```
 
----
+<br/>
 
 ### debounce 적용
 
@@ -111,7 +111,7 @@ const handleKeywordChange = debounce(
 );
 ```
 
----
+<br/>
 
 ### 키보드만으로 추천 검색어들로 이동 가능하도록 구현
 
