@@ -4,11 +4,17 @@
 
 검색창 구현 + 검색어 추천 기능 구현 + 캐싱 기능 구현
 
+---
+
 ## 🌈 배포
 
 https://pre-onboarding-3.vercel.app/
 
+---
+
 ## ✨기능 구현 사항
+
+---
 
 ### API 호출별로 로컬 캐싱 구현
 
@@ -28,6 +34,7 @@ https://pre-onboarding-3.vercel.app/
     );
   }
   ```
+  <br/>
 - cache state데이터를 json으로 구현
   ```jsx
   type Cache = {
@@ -36,6 +43,7 @@ https://pre-onboarding-3.vercel.app/
     suggestions: Sick[];
   };
   ```
+  <br/>
 - 해당 키워드가 캐싱 데이터에 존재하면 캐싱 데이터를 사용
   ```jsx
   if (canUseCache) {
@@ -45,7 +53,9 @@ https://pre-onboarding-3.vercel.app/
     if (updatedCache) setSuggestion(() => updatedCache);
   }
   ```
+  <br/>
 - 해당 키워드가 캐싱 데이터에 존재하지 않다면 api 호출
+
   ```jsx
   if (!canUseCache) {
     const newSuggestion: Sick[] = await fetchSuggestions(keyword);
@@ -67,6 +77,9 @@ https://pre-onboarding-3.vercel.app/
     setSuggestion(() => newSuggestion);
   }
   ```
+
+  <br/>
+
 - 키워드의 만료시간이 지났다면 캐시에서 삭제 후, api 호출
   ```jsx
   const deleteExpiredCache = (keyword: string) => {
@@ -82,6 +95,8 @@ https://pre-onboarding-3.vercel.app/
     };
   ```
 
+---
+
 ### debounce 적용
 
 입력마다 API 호출하지 않도록 lodash의 debounce를 이용하여 구현
@@ -95,6 +110,8 @@ const handleKeywordChange = debounce(
   1000
 );
 ```
+
+---
 
 ### 키보드만으로 추천 검색어들로 이동 가능하도록 구현
 
