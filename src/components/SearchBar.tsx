@@ -2,23 +2,27 @@ import { useContext } from "react";
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-// import useSuggestions from "../hooks/useSuggestions";
 import { SuggestionContext } from "../contexts/SuggestionContext";
+import { debounce } from "lodash";
 
 const SearchBar = ({ handleKeyDown }: any) => {
-  // const { fetchSuggestions, isLoading, error } = useSuggestions();
-  const { setKeyword, handleSetSuggestions } = useContext(SuggestionContext);
+  const { handleSetSuggestions } = useContext(SuggestionContext);
 
-  const handleFormSubmit = (event: any) => {
-    event.preventDefault();
-    const { value: keyword } = event.target.elements["keyword"];
+  const handleKeywordChange = debounce((event: any) => {
+    const { value: keyword } = event.target;
+    console.log("keyword ", keyword);
     handleSetSuggestions(keyword);
-  };
+  }, 1000);
 
   return (
-    <Form onSubmit={handleFormSubmit}>
+    <Form autoComplete="off">
       <FontAwesomeIcon icon={faMagnifyingGlass} />
-      <input type="text" name="keyword" onKeyDown={handleKeyDown} />
+      <input
+        type="text"
+        name="keyword"
+        onKeyDown={handleKeyDown}
+        onChange={handleKeywordChange}
+      />
       <button type="submit">검색</button>
     </Form>
   );

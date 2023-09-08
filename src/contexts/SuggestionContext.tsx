@@ -29,22 +29,35 @@ export function SuggestionContextProvider({
   children: ReactNode;
 }) {
   const [suggestions, setSuggestions] = useState<any>([]);
-  const [suggestion, setSuggestion] = useState<any>([]);
+  const [suggestion, setSuggestion] = useState<any>(null);
   const [focusIndex, setFocusIndex] = useState<number>(0);
 
+  const deleteExpiredData = (keyword: string) => {
+    let nextSuggestions = [...suggestions];
+    const expiredIndex = suggestions.findIndex(
+      (suggestion: any) => suggestion.keyword === keyword
+    );
+    if (expiredIndex > -1) {
+      nextSuggestions = [...suggestions];
+      nextSuggestions.splice(expiredIndex, 1);
+    }
+    return nextSuggestions;
+  };
+
   const handleSetSuggestions = async (keyword: string) => {
-    console.log("keyword", keyword);
+    // 캐시안에 있는지 체크
     const hasSuggestions = suggestions.some(
       (suggestion: any) => suggestion.keyword === keyword
     );
-    console.log("hasSuggestions", hasSuggestions);
 
     // 만료됐는지 체크
     const isExpired = () => {
-      const cacheTime = suggestions.find(
-        (suggestion: any) => suggestion.keyword === keyword
-      ).staleTime;
-      return new Date().getTime() - cacheTime > STALE_CHECK_TIME;
+      return (
+        new Date().getTime() -
+          suggestions.find((suggestion: any) => suggestion.keyword === keyword)
+            .staleTime >
+        STALE_CHECK_TIME
+      );
     };
 
     if (hasSuggestions && !isExpired()) {
@@ -53,24 +66,16 @@ export function SuggestionContextProvider({
           suggestions.find((suggestion: any) => suggestion.keyword === keyword)
             .suggestions
       );
-
       console.log("캐시 사용");
     } else {
-      const expiredIndex = suggestions.findIndex(
-        (suggestion: any) => suggestion.keyword === keyword
-      );
-      let nextSuggestions = [...suggestions];
-      if (expiredIndex > -1) {
-        // const newSuggestions = suggestions.slice(expiredIndex)
-        nextSuggestions = [...suggestions];
-        nextSuggestions.splice(expiredIndex, 1);
-        console.log("nextSuggestions", nextSuggestions);
-      }
-      console.log("isExpired ", expiredIndex);
-
-      const newSuggestion = await getSuggestions(keyword);
-      if (!newSuggestion) setSuggestion(() => []);
+      const nextSuggestions = deleteExpiredData(keyword);
+      const newSuggestion: any = await getSuggestions(keyword);
       console.info("calling api");
+
+      if (newSuggestion.length === 0) {
+        setSuggestion([]);
+        return;
+      }
 
       setSuggestions(() => [
         ...nextSuggestions,

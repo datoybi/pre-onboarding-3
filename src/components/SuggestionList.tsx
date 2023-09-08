@@ -7,18 +7,18 @@ const SuggestionList = () => {
   const { suggestion, focusIndex } = useContext(SuggestionContext);
 
   const ItemElement = () => {
-    if (!suggestion) {
-      return <p>검색 결과가 없습니다.</p>;
+    if (suggestion === null) return;
+    if (suggestion.length === 0) {
+      return <Empty>검색 결과가 없습니다.</Empty>;
     }
 
-    const ItemElements = suggestion.map((suggestion: any, index: number) => (
+    return suggestion.map((suggestion: any, index: number) => (
       <SuggestionItem
         key={suggestion.sickCd}
         name={suggestion.sickNm}
         isFocus={focusIndex === index}
       />
     ));
-    return ItemElements;
   };
 
   return (
@@ -49,4 +49,9 @@ const List = styled.ul`
     margin-bottom: 10px;
     padding: 20px 10px 0 20px;
   }
+`;
+
+const Empty = styled.p`
+  text-align: center;
+  padding: 10px;
 `;
