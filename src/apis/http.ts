@@ -1,7 +1,7 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 // const baseURL = "http://localhost:4000/";
-const baseURL = "https://deploy-json-git-main-datoybi.vercel.app/";
+const baseURL = process.env.REACT_APP_DISEASE_DB;
 
 const axios = Axios.create({
   baseURL,
