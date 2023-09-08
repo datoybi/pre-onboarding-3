@@ -4,20 +4,27 @@ import SuggestionItem from "./SuggestionItem";
 import { SuggestionContext } from "../contexts/SuggestionContext";
 
 const SuggestionList = () => {
-  const { suggestions, focusIndex } = useContext(SuggestionContext);
+  const { suggestion, focusIndex } = useContext(SuggestionContext);
 
-  const ItemElements = suggestions.map((suggestion: any, index: number) => (
-    <SuggestionItem
-      key={suggestion.sickCd}
-      name={suggestion.sickNm}
-      isFocus={focusIndex === index}
-    />
-  ));
+  const ItemElement = () => {
+    if (!suggestion) {
+      return <p>검색 결과가 없습니다.</p>;
+    }
+
+    const ItemElements = suggestion.map((suggestion: any, index: number) => (
+      <SuggestionItem
+        key={suggestion.sickCd}
+        name={suggestion.sickNm}
+        isFocus={focusIndex === index}
+      />
+    ));
+    return ItemElements;
+  };
 
   return (
     <List>
       <h3>추천 검색어</h3>
-      {ItemElements}
+      {ItemElement()}
     </List>
   );
 };
