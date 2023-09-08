@@ -1,6 +1,7 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
-const baseURL = "http://localhost:4000/";
+// const baseURL = "http://localhost:4000/";
+const baseURL = "https://deploy-json-git-main-datoybi.vercel.app/";
 
 const axios = Axios.create({
   baseURL,

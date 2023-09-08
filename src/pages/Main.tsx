@@ -10,6 +10,7 @@ export default function Main() {
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+    event.preventDefault();
     switch (event.key) {
       case "ArrowDown":
         if (suggestion.length < 0) return;

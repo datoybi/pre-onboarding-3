@@ -10,7 +10,6 @@ const SearchBar = ({ handleKeyDown }: any) => {
 
   const handleKeywordChange = debounce((event: any) => {
     const { value: keyword } = event.target;
-    console.log("keyword ", keyword);
     handleSetSuggestions(keyword);
   }, 1000);
 
